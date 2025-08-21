@@ -15,14 +15,6 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Custom spinner animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .animate-spin-fast {
-            animation: spin 0.7s linear infinite;
-        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -32,77 +24,48 @@
 
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Your Daily Chuckle</h1>
 
-        <!-- Container for the joke text and the loading spinner -->
-        <div class="relative min-h-[6rem] flex items-center justify-center">
-            <!-- The main joke text, which will be updated by JavaScript -->
-            <p id="joke-text" class="text-2xl text-gray-600 font-semibold italic leading-relaxed">
-                <!-- Initial placeholder text -->
-                Loading a joke...
-            </p>
-
-            <!-- Loading spinner -->
-            <div id="loading-spinner" class="absolute hidden">
-                <div class="w-10 h-10 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin-fast"></div>
-            </div>
-        </div>
+        <!-- The main joke text, which will be updated by JavaScript -->
+        <p id="joke-text" class="text-2xl text-gray-600 font-semibold mb-8 min-h-[6rem] flex items-center justify-center italic leading-relaxed">
+            <!-- Initial placeholder text -->
+            Loading a joke...
+        </p>
 
     </div>
 
     <script>
-        // An async function to fetch a joke from an AI model
-        async function fetchJokeFromAI() {
+        // An array of jokes
+        const jokes = [
+            "Why don't scientists trust atoms? Because they make up everything!",
+            "I'm reading a book on anti-gravity. It's impossible to put down.",
+            "Why did the scarecrow win an award? Because he was outstanding in his field!",
+            "What do you call a fake noodle? An impasta.",
+            "I've got a great joke about a pizza, but it's a little cheesy.",
+            "Did you hear about the two antennas who got married? The ceremony was a little boring, but the reception was great!",
+            "Why did the bicycle fall over? Because it was two-tired!",
+            "What do you call a sleeping bull? A bulldozer.",
+            "Parallel lines have so much in common. It’s a shame they’ll never meet.",
+            "I told my wife she should embrace her mistakes. She gave me a hug.",
+            "How do you organize a space party? You planet!",
+            "What do you call a sad strawberry? A blueberry."
+        ];
+
+        // Function to select and display a random joke
+        function displayRandomJoke() {
             // Get the element where the joke will be displayed
             const jokeElement = document.getElementById('joke-text');
-            const loadingSpinner = document.getElementById('loading-spinner');
 
-            // Show the loading spinner and hide the joke text
-            jokeElement.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
+            // Generate a random index based on the length of the jokes array
+            const randomIndex = Math.floor(Math.random() * jokes.length);
 
-            try {
-                // The prompt for the AI to generate a joke
-                const prompt = "Generate a short, family-friendly joke.";
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            // Get the random joke from the array
+            const randomJoke = jokes[randomIndex];
 
-                // Fetch the joke from the AI
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                // Check if the response is successful
-                if (!response.ok) {
-                    throw new Error(`API call failed with status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                // Navigate the JSON to get the joke text
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (text) {
-                    jokeElement.textContent = text;
-                } else {
-                    jokeElement.textContent = "Oops! Couldn't find a joke. Please try refreshing.";
-                }
-
-            } catch (error) {
-                console.error("Error fetching joke:", error);
-                jokeElement.textContent = "I'm having trouble getting a joke right now. Please try again later.";
-            } finally {
-                // Hide the loading spinner and show the joke text again
-                loadingSpinner.classList.add('hidden');
-                jokeElement.classList.remove('hidden');
-            }
+            // Update the text content of the element with the new joke
+            jokeElement.textContent = randomJoke;
         }
 
-        // Call the function when the page first loads
-        window.addEventListener('load', fetchJokeFromAI);
+        // Call the function when the page first loads to display a joke immediately
+        window.addEventListener('load', displayRandomJoke);
     </script>
 </body>
 </html>
